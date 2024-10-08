@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #stopwatch {
+            font-size: 3em;
+            padding: 20px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .start {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .stop {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .reset {
+            background-color: #607D8B;
+            color: white;
+        }
+
+        #lapTimes {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #lapTimes li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="stopwatch">00:00:00</div>
+    <div>
+        <button class="start" onclick="startStopWatch()">Start</button>
+        <button class="stop" onclick="stopWatch()" disabled>Stop</button>
+        <button class="reset" onclick="resetStopWatch()" disabled>Reset</button>
+    </div>
+    <ul id="lapTimes"></ul>
+    <script>
+        let startTime;
+        let elapsedTime = 0;
+        let timerInterval;
+        let isRunning = false;
+
+        function startStopWatch() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateStopWatch, 10);
+                isRunning = true;
+                document.querySelector('.start').disabled = true;
+                document.querySelector('.stop').disabled = false;
+                document.querySelector('.reset').disabled = false;
+            }
+        }
+
+        function stopWatch() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            document.querySelector('.start').disabled = false;
+            document.querySelector('.stop').disabled = true;
+            document.querySelector('.reset').disabled = false;
+        }
+
+        function resetStopWatch() {
+            clearInterval(timerInterval);
+            elapsedTime = 0;
+            isRunning = false;
+            document.getElementById('stopwatch').textContent = '00:00:00';
+            document.getElementById('lapTimes').innerHTML = '';
+            document.querySelector('.start').disabled = false;
+            document.querySelector('.stop').disabled = true;
+            document.querySelector('.reset').disabled = true;
+        }
+
+        function updateStopWatch() {
+            elapsedTime = Date.now() - startTime;
+            let formattedTime = formatTime(elapsedTime);
+            document.getElementById('stopwatch').textContent = formattedTime;
+        }
+
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const millisecondsPart = Math.floor((milliseconds % 1000) / 10);
+
+            return pad(minutes) + ':' + pad(seconds) + ':' + pad(millisecondsPart);
+        }
+
+        function pad(number) {
+            return (number < 10 ? '0' : '') + number;
+        }
+
+        function recordLap() {
+            const lapTime = document.createElement('li');
+            lapTime.textContent = document.getElementById('stopwatch').textContent;
+            document.getElementById('lapTimes').appendChild(lapTime);
+        }
+    </script>
+</body>
+
+</html>
